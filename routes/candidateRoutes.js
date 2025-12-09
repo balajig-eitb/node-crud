@@ -6,11 +6,18 @@ import {
     updateCandidate,
     deleteCandidate 
 } from "../models/candidateModel.js";
+import { auth } from "../middleware/auth.js";
 
 const router = express.Router();
 
+router.use(auth);
+
 router.post('/candidates', async (req, res) => {
 
+    if(!req.body)
+    {
+      res.status(400).json({ error: "Check fields"});
+    }
     try{
         const result = await createCandidate(req.body);
 
