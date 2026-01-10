@@ -9,6 +9,7 @@ const Candidate = sequelize.define(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
+    ref_id: DataTypes.STRING,
     firstname: DataTypes.STRING,
     lastname: DataTypes.STRING,
     name: DataTypes.STRING,
@@ -26,6 +27,8 @@ const Candidate = sequelize.define(
     // github_url: DataTypes.STRING,
     notice_period: DataTypes.STRING,
     expected_salary: DataTypes.STRING,
+    applied_date: DataTypes.DATE,
+    status: DataTypes.STRING,
   },
   {
     tableName: "candidates",
