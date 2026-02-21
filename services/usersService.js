@@ -5,10 +5,10 @@ import { checkPassword } from "../utils/verifyPwd.js"
 import { UniqueConstraintError } from "sequelize";
 
 export const createUser = async (data) => {
-   console.log(data);
+  // console.log(data);
   
    const hashedPassword = await generatePassword(data.password ?? "EiTB@2026");
-   console.log(hashedPassword);
+   //console.log(hashedPassword);
    try{
       const user = await Users.create({
       name : data.name,
@@ -71,3 +71,73 @@ export const logIn = async(user_name, password) =>{
    
     return {"message" : "Invalid credentials"};
 }
+
+
+
+export const updateUser = async(data)  => {
+
+  let user = await  Users.findByPk(data.id);
+
+  if(!user){
+
+    return {"message" : "No user found"};
+
+  }
+
+   const hashedPassword = await generatePassword(data.password ?? "EiTB@2026");
+   //console.log(hashedPassword);
+    try{
+        const [affectedRows] = await Users.update(
+      {
+        name: data.name,
+        password: hashedPassword,
+        user_name: data.user_name,
+        role: data.role,
+      },
+      {
+        where: { id: data.id }
+      }
+    );
+
+    if (affectedRows === 0) {
+      return null; // user not found
+    }
+
+    return { message: "Updated successfully" };
+   
+  }catch(error){
+
+    if(error instanceof UniqueConstraintError) {
+        const err = new Error('Username already exists');
+        err.status = 409;
+        err.field = 'user_name';
+        throw err;
+    }
+
+    throw error;
+  }
+}
+
+
+export const activeToggle = async (data) => {
+  try {
+    const user = await Users.findByPk(data.id);
+
+    if (!user) {
+      return { status: "NOT_FOUND", message: "No user found" };
+    }
+
+    await user.update({
+      active: !user.active
+    });
+
+    return {
+      status: "OK",
+      message: "Updated successfully",
+      active: user.active
+    };
+
+  } catch (error) {
+    throw error;
+  }
+};
