@@ -54,3 +54,41 @@ export const getCandidateById = async (id) => {
     return candidate;
 
 };
+
+
+
+export const updateCandidate = async (data) => {
+  try {
+    const candidate = await Candidate.findByPk(data.id);
+
+    if (!candidate) {
+      return null; // caller decides 404
+    }
+
+    const name = `${data.firstname ?? candidate.firstname ?? ""} ${data.lastname ?? candidate.lastname ?? ""}`.trim();
+
+    await candidate.update({
+      firstname: data.firstname ?? candidate.firstname,
+      lastname: data.lastname ?? candidate.lastname,
+      name: name,
+      email: data.email ?? candidate.email,
+      phone: data.phone ?? candidate.phone,
+      location: data.location ?? candidate.location,
+      role: data.role ?? candidate.role,
+      job_role: data.job_role ?? candidate.job_role,
+      current_company: data.currentCompany ?? candidate.current_company,
+      education: data.education ?? candidate.education,
+      experience: data.experience ?? candidate.experience,
+      skills: data.key_skills ?? candidate.skills,
+      linkedin: data.linkedin ?? candidate.linkedin,
+      portfolio: data.portfolio ?? candidate.portfolio,
+      notice_period: data.noticePeriod ?? candidate.notice_period,
+      expected_salary: data.expectedSalary ?? candidate.expected_salary,
+    });
+
+    return candidate;
+
+  } catch (error) {
+    throw error;
+  }
+};

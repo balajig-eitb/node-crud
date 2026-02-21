@@ -18,8 +18,8 @@ const Roles = sequelize.define(
     active: DataTypes.BOOLEAN,
     },
     {
-      timestamps: false,   // 🔑 THIS FIXES IT
-      tableName: 'roles',  // optional but recommended
+      timestamps: false,  
+      tableName: 'roles', 
     }
 )
 

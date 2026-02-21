@@ -8,6 +8,20 @@ const options = {
       version: '1.0.0',
       description: 'API documentation for Roles service',
     },
+    tags: [
+      {
+        name: "Users",
+        description: "User management APIs",
+      },
+      {
+        name: "Candidates",
+        description: "Candidate-related APIs",
+      },
+      {
+        name: "Roles",
+        description: "Candidate-related APIs",
+      },
+    ],
     servers: [
       {
         url: 'http://localhost:5000',
