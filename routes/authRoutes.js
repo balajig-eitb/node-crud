@@ -2,11 +2,10 @@ import express, { response } from "express"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import { getUserByEmail,createUser } from "../models/userModel.js";
-
-
+import passport from "passport";
 const router = express.Router();
 
-const users = [];
+
 
 router.post("/register", async (req, res) => {
 
@@ -61,6 +60,73 @@ router.post("/getuserbyemail", async(req, res) => {
 
     return res.status(200).json({data: result});
 
+});
+
+// Step 1 → redirect to Google Login
+router.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    prompt: "select_account"
+  })
+);
+
+// Step 2 → Google callback
+router.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/auth/failed",
+  }),
+  (req, res) => {
+    res.send(`
+      <script>
+        window.opener.postMessage(
+          { type: "GOOGLE_LOGIN_SUCCESS" },
+          "http://localhost:3000"
+        );
+        window.close();
+      </script>
+    `);
+  }
+);
+
+// Login failed
+router.get("/auth/failed", (req, res) => {
+  res.send(`
+    <script>
+      window.opener.postMessage(
+        { type: "GOOGLE_LOGIN_FAILED" },
+        "http://localhost:3000"
+      );
+      window.close();
+    </script>
+  `);
+});
+
+// Logout route
+router.get("/logout", (req, res, next) => {
+  if (!req.user) {
+    return res.send("No user logged in.");
+  }
+
+  req.logout(function(err) {
+    if (err) return next(err);
+
+    req.session.destroy(() => {
+      res.clearCookie("connect.sid");
+      res.send("Logged out successfully.");
+    });
+  });
+});
+
+router.get("/auth/me", (req, res) => {
+  if (req.isAuthenticated()) {
+    return res.json({
+      authenticated: true,
+      user: req.user,
+    });
+  }
+  res.json({ authenticated: false });
 });
 
 export default router;
