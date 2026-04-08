@@ -63,8 +63,7 @@ router.post("/getuserbyemail", async(req, res) => {
 });
 
 // Step 1 → redirect to Google Login
-router.get(
-  "/auth/google",
+router.get("/google",
   passport.authenticate("google", {
     scope: ["profile", "email"],
     prompt: "select_account"
@@ -73,9 +72,9 @@ router.get(
 
 // Step 2 → Google callback
 router.get(
-  "/auth/google/callback",
+  "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "/auth/failed",
+    failureRedirect: "/failed",
   }),
   (req, res) => {
     res.send(`
@@ -91,7 +90,7 @@ router.get(
 );
 
 // Login failed
-router.get("/auth/failed", (req, res) => {
+router.get("/failed", (req, res) => {
   res.send(`
     <script>
       window.opener.postMessage(
@@ -119,7 +118,7 @@ router.get("/logout", (req, res, next) => {
   });
 });
 
-router.get("/auth/me", (req, res) => {
+router.get("/me", (req, res) => {
   if (req.isAuthenticated()) {
     return res.json({
       authenticated: true,
