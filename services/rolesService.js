@@ -43,3 +43,27 @@ export const getRoleById = async (id) => {
     return roles;
 
 };
+
+export const updateRole = async (id, data) => {
+  try {
+    const role = await Roles.findByPk(id);
+
+    if (!role) {
+      return null; // caller decides 404
+    }
+
+    const name = `${data.name ?? role.name ?? ""}`.trim();
+
+    await role.update({
+      name: name,
+      code: data.code ?? role.code,
+      description: data.description ?? role.description,
+      
+    });
+
+    return role;
+
+  } catch (error) {
+    throw error;
+  }
+};
