@@ -106,5 +106,22 @@ router.post("/create-roles", async (req, res) => {
     }     
 })
 
+router.put("/update-role/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const updatedRole = await updateRole(id, req.body);
+
+    if (!updatedRole) {
+      return res.status(404).json({ message: "Role not found" });
+    }
+
+    res.status(200).json({ data: updatedRole });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 export default router;
