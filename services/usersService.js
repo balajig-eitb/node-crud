@@ -74,49 +74,73 @@ export const logIn = async(user_name, password) =>{
 
 
 
-export const updateUser = async(data)  => {
+// export const updateUser = async(data)  => {
 
-  let user = await  Users.findByPk(data.id);
+//   let user = await  Users.findByPk(data.id);
 
-  if(!user){
+//   if(!user){
 
-    return {"message" : "No user found"};
+//     return {"message" : "No user found"};
 
-  }
+//   }
 
-   const hashedPassword = await generatePassword(data.password ?? "EiTB@2026");
-   //console.log(hashedPassword);
-    try{
-        const [affectedRows] = await Users.update(
-      {
-        name: data.name,
-        password: hashedPassword,
-        user_name: data.user_name,
-        role: data.role,
-      },
-      {
-        where: { id: data.id }
-      }
-    );
+//    const hashedPassword = await generatePassword(data.password ?? "EiTB@2026");
+//    //console.log(hashedPassword);
+//     try{
+//         const [affectedRows] = await Users.update(
+//       {
+//         name: data.name,
+//         password: hashedPassword,
+//         user_name: data.user_name,
+//         role: data.role,
+//       },
+//       {
+//         where: { id: data.id }
+//       }
+//     );
 
-    if (affectedRows === 0) {
-      return null; // user not found
-    }
+//     if (affectedRows === 0) {
+//       return null; // user not found
+//     }
 
-    return { message: "Updated successfully" };
+//     return { message: "Updated successfully" };
    
-  }catch(error){
+//   }catch(error){
 
-    if(error instanceof UniqueConstraintError) {
-        const err = new Error('Username already exists');
-        err.status = 409;
-        err.field = 'user_name';
-        throw err;
+//     if(error instanceof UniqueConstraintError) {
+//         const err = new Error('Username already exists');
+//         err.status = 409;
+//         err.field = 'user_name';
+//         throw err;
+//     }
+
+//     throw error;
+//   }
+// }
+
+export const updateUser = async (id, data) => {
+  try {
+    const user = await Users.findByPk(id);
+
+    if (!user) {
+      return null; // caller decides 404
     }
 
+    const name = `${data.name ?? user.name ?? ""}`.trim();
+
+    await user.update({
+      name: name,
+      code: data.code ?? user.code,
+      description: data.description ?? user.description,
+      
+    });
+
+    return user;
+
+  } catch (error) {
     throw error;
   }
-}
+};
 
 
 export const activeToggle = async (data) => {

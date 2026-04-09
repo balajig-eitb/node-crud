@@ -147,25 +147,41 @@ router.post("/create-user", async (req, res) => {
  *       201:
  *         description: User updated successfully
  */
-router.post("/update-user", async (req, res) => {
-    console.log(req.body);
-    try {
-        if(!req.body.name || !req.body.user_name || !req.body.password || !req.body.id)
-        {
-            return res.status(409).json({"message" : "required field missing"});
-        }
+// router.post("/update-user/:id", async (req, res) => {
+//     console.log(req.body);
+//     try {
+//         if(!req.body.name || !req.body.user_name || !req.body.password || !req.body.id)
+//         {
+//             return res.status(409).json({"message" : "required field missing"});
+//         }
 
-        const user = await updateUser(req.body);
+//         const user = await updateUser(req.body);
         
-        if(user){
-           return res.status(200).json({ data : user});
-        }
+//         if(user){
+//            return res.status(200).json({ data : user});
+//         }
         
-    }catch (error) {
-        res.status(500).json({ message : error.message});
-    }     
+//     }catch (error) {
+//         res.status(500).json({ message : error.message});
+//     }     
+// });
+
+router.put("/update-user/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const updatedUser = await updateUser(id, req.body);;
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ data: updatedUser });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
-
 
 router.post("/login", async (req, res)=>{
 
