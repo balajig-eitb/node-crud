@@ -81,7 +81,7 @@ router.get(
       <script>
         window.opener.postMessage(
           { type: "GOOGLE_LOGIN_SUCCESS" },
-          "http://localhost:3000"
+          "http://localhost:3000/"
         );
         window.close();
       </script>
